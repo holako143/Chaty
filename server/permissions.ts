@@ -35,6 +35,7 @@ const moderatorPerms = [
   "manage_filters",
   "view_activity_logs",
   "manage_room_content",
+  "access_admin_panel",
 ];
 
 const adminPerms = [
