@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      String   @default("USER") // "USER" or "ADMIN"
+  messages  Message[]
+  logs      Log[]
+  createdAt DateTime @default(now())
+
+  flairId   String?
+  flair     Flair?   @relation(fields: [flairId], references: [id])
+}
+
+model Room {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  messages  Message[]
+  createdAt DateTime  @default(now())
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id])
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  action    String   // e.g., "USER_LOGIN", "SEND_MESSAGE"
+  details   String?  // Additional details, like message content or room joined
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Setting {
+  id              String @id @default(cuid())
+  key             String @unique
+  value           String
+  description     String
+}
+
+model Flair {
+  id    String @id @default(cuid())
+  name  String @unique
+  icon  String // URL or emoji character
+  users User[]
+}
+
+model CustomEmoji {
+  id       String @id @default(cuid())
+  name     String @unique
+  imageUrl String
+}
+
+model Shortcut {
+  id           String @id @default(cuid())
+  shortcutText String @unique
+  fullText     String
+}
